@@ -141,4 +141,4 @@ La latitude sert à déterminer où se situe un point sur le globe par rapport  
 
 ## Retours sur le test
 
-J'ai essayé de réflechir le plus loin possible pour ne pas produire quelque chose de simplement fonctionnel. J'ai donc documenté le projet et réflechis à l'architecture technique et les standards que j'allais utiliser. La principale difficulté était de mettre en place l'architecture du code sous nodejs pour qu'il soit flexible. Étant donné que je n'ai que très peu pratiqué sur cette techno, il fallait que j'apprenne rapidement la syntaxe de l'orienté objet en js.
+Le test n'était pas très difficile. J'ai essayé de réflechir le plus loin possible pour ne pas produire quelque chose de simplement fonctionnel. J'ai donc documenté le projet et réflechis à l'architecture technique et les standards que j'allais utiliser. La principale difficulté était de mettre en place l'architecture du code sous nodejs pour qu'il soit flexible. Étant donné que je n'ai que très peu pratiqué sur cette techno, il fallait que j'apprenne rapidement la syntaxe de l'orienté objet en js.
