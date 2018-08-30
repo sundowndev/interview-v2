@@ -41,7 +41,7 @@ The `/posts` route can receive extra parameters :
 | Parameter        | Values/type           | Description  |
 | --------------------- | ------------------ | ------------ |
 | user_pos | eq,cancer,cap,arctic,antarctic | Search posts by user position |
-| user_id | *int* | Search posts by user id |
+| user | *int* | Search posts of a single user using user id |
 
 A bad value will result in an error.
 
