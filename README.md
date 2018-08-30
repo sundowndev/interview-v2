@@ -1,6 +1,6 @@
 # interview-v2
 
-Simple REST API application based on Expressjs to fetch blog posts with custom endpoints and responses.
+Simple REST API application based on Expressjs to fetch blog posts and users from an external API with custom endpoint and response.
 
 ### Installation (docker)
 
@@ -42,6 +42,8 @@ The `/posts` route can receive extra parameters :
 | --------------------- | ------------------ | ------------ |
 | user_pos | eq,cancer,cap,arctic,antarctic | Search posts by user position |
 | user_id | *int* | Search posts by user id |
+
+A bad value will result in an error.
 
 ### Response
 
@@ -102,7 +104,7 @@ The application fetch resources from an external REST API and formats the respon
 
 ![](https://i.imgur.com/vRJhQMP.png)
 
-The Docker configuration is composed of 2 layers. It uses a node image to launch the app and Nginx.
+The Docker configuration is composed of 2 layers. It uses a node image to launch the app with Nginx.
 
 -----
 
@@ -134,3 +136,9 @@ La latitude sert à déterminer où se situe un point sur le globe par rapport  
 - Le tropique du capricorne (latitude 23° 27' sud)
 - Le cercle polaire arctique (latitude 66° 33' nord)
 - Le cercle polaire antarctique (latitude 66° 33' sud)
+
+-----
+
+## Retours sur le test
+
+J'ai essayé de réflechir le plus loin possible pour ne pas produire quelque chose de simplement fonctionnel. J'ai donc documenté le projet et réflechis à l'architecture technique et les standards que j'allais utiliser. La principale difficulté était de mettre en place l'architecture du code sous nodejs pour qu'il soit flexible. Étant donné que je n'ai que très peu pratiqué sur cette techno, il fallait que j'apprenne rapidement la syntaxe de l'orienté objet en js.
