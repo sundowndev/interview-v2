@@ -14,6 +14,7 @@ $ docker-compose build
 
 ~~~
 $ npm install
+$ npm run build
 ~~~
 
 ### Usage
@@ -21,7 +22,7 @@ $ npm install
 Launch server
 
 ~~~
-$ node index.js
+$ npm run start
 ~~~
 
 Launch application with Docker
