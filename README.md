@@ -143,3 +143,13 @@ La latitude sert à déterminer où se situe un point sur le globe par rapport  
 ## Retours sur le test
 
 Le test n'était pas très difficile, même si j'ai eu quelques problèmatiques. J'ai essayé de réflechir le plus loin possible pour ne pas produire quelque chose de simplement fonctionnel. J'ai donc documenté le projet et réflechis à l'architecture technique et les standards que j'allais utiliser. La principale difficulté était de mettre en place l'architecture du code sous nodejs pour qu'il soit flexible. Étant donné que je n'ai que très peu pratiqué sur cette techno, il fallait que j'apprenne rapidement la syntaxe de l'orienté objet en js, le concept des promesses et de l'asynchrone. J'ai l'habitude de travailler sur des languages de programmation tel que php et python. Passer sur du node n'était pas chose facile surtout si en me plongeant directement dans le code.
+
+#### Références
+
+Liste des ressources qui m'ont principalement aidées.
+
+- https://medium.com/@Abazhenov/using-async-await-in-express-with-node-8-b8af872c0016
+- https://blog.risingstack.com/mastering-async-await-in-nodejs/
+- https://stackoverflow.com/questions/40348171/es6-map-an-array-of-objects-to-return-an-array-of-objects-with-new-keys
+- https://stackoverflow.com/questions/42489918/async-await-inside-arraymap
+- https://futurestud.io/tutorials/node-js-how-to-run-an-asynchronous-function-in-array-map
