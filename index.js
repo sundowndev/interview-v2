@@ -1,28 +1,27 @@
 "use strict";
 
-import ApiClient from './src/ApiClient';
+//import ApiClient from './src/ApiClient';
 import JsonResponse from './src/JsonResponse';
 
 const express = require('express');
 const bodyParser = require('body-parser');
 
 const app = express();
-const api = new ApiClient();
+//const api = new ApiClient();
 const json = new JsonResponse();
+const axios = require('axios');
 
 /**
  * Config
  * @type {number}
  */
 const port = 3000;
+const ApiUrl = 'https://jsonplaceholder.typicode.com';
 
 /**
  * Routes
  */
 app.use(function (req, res, next) {
-    // Default api domain
-    api.setApiUrl('https://jsonplaceholder.typicode.com');
-
     json.init(app, res);
 
     next()
@@ -32,30 +31,31 @@ app.get('/', (req, res) => {
     return json.send(res, 200, {data: []});
 });
 
-app.get('/posts', (req, res) => {
-    let posts = api.findAllPosts();
+app.get('/posts', async (req, res) => {
+    let posts = await axios.get(ApiUrl + '/posts');
 
-    posts.forEach(function (p) {
-        let user = api.findUserById(p.userId);
+    const formatedPosts = posts.data.map(async post => {
+        let userId = post.userId;
+        let user = await axios.get(ApiUrl + '/users/'+userId);
 
-        p.title = '<h1>' + p.title + '</h1>';
-        p.body = '<p>' + p.body + '</p>';
-        p.user = {
-            "id": user.id,
-            "firstname": user.name,
-            "lastname": user.name,
-            "email": user.email,
-            "comments_count": 3,
-            "pos": user.geo,
-            "_links": {
-                "posts": "/posts?user=" + user.id
+        return {
+            id: post.id,
+            title: '<h1>'+post.title+'</h1>',
+            body: '<p>'+post.body+'</p>',
+            user: {
+                id: user.data.id,
+                firstname: user.data.name,
+                lastname: user.data.name,
+                email: user.data.email,
+                comments_count: 3,
+                pos: user.data.pos
             }
         };
-
-        delete p.userId;
     });
 
-    return json.send(res, 200, {data: posts});
+    const response = await Promise.all(formatedPosts);
+
+    return json.send(res, 200, {data: response});
 });
 
 app.listen(port, () => {
