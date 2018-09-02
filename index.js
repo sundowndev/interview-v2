@@ -32,28 +32,31 @@ app.get('/', (req, res) => {
 });
 
 app.get('/posts', async (req, res) => {
-    let posts = await axios.get(ApiUrl + '/posts');
+    const params = ['userId', 'userPos'];
+    const posts = await axios(ApiUrl + '/posts');
 
-    const formatedPosts = posts.data.map(async post => {
-        let userId = post.userId;
-        let user = await axios.get(ApiUrl + '/users/'+userId);
+    const formattedPosts = posts.data.map(async post => {
+        const userId = post.userId;
+        const user = await axios(ApiUrl + '/users/' + userId);
+
+        const commentsCount = await axios(ApiUrl + '/posts/' + post.id + '/comments');
 
         return {
             id: post.id,
-            title: '<h1>'+post.title+'</h1>',
-            body: '<p>'+post.body+'</p>',
+            title: '<h1>' + post.title + '</h1>',
+            body: '<p>' + post.body + '</p>',
+            comments_count: commentsCount.data.length,
             user: {
                 id: user.data.id,
                 firstname: user.data.name,
                 lastname: user.data.name,
                 email: user.data.email,
-                comments_count: 3,
-                pos: user.data.pos
+                geo: user.data.geo
             }
         };
     });
 
-    const response = await Promise.all(formatedPosts);
+    const response = await Promise.all(formattedPosts);
 
     return json.send(res, 200, {data: response});
 });
