@@ -1,14 +1,14 @@
 "use strict";
 
 //import ApiClient from './src/ApiClient';
-import JsonResponse from './src/JsonResponse';
+//import JsonResponse from './src/JsonResponse';
 
 const express = require('express');
 const bodyParser = require('body-parser');
 
 const app = express();
 //const api = new ApiClient();
-const json = new JsonResponse();
+//const json = new JsonResponse();
 const axios = require('axios');
 
 /**
@@ -16,28 +16,64 @@ const axios = require('axios');
  * @type {number}
  */
 const port = 3000;
+
+/**
+ * External API URL
+ * @type {string}
+ */
 const ApiUrl = 'https://jsonplaceholder.typicode.com';
+
+/**
+ * Check position
+ * @param geo
+ */
+const checkPos = (geo) => {
+    //TODO: check position properly
+    switch (geo.lat | geo.lng) {
+        case geo.lat === 0:
+            return 'eq';
+        case geo.lat === 23 | geo.lng >= 27:
+            return 'cancer';
+        case geo.lat === 23 | geo.lng <= 27:
+            return 'cap';
+        case geo.lat === 66 | geo.lng >= 33:
+            return 'arctic';
+        case geo.lat === 66 | geo.lng <= 33:
+            return 'antarctic';
+    }
+};
 
 /**
  * Routes
  */
 app.use(function (req, res, next) {
-    json.init(app, res);
+    // Enable json prettify
+    app.set('json spaces', 2);
+
+    // Set response headers
+    res.setHeader('Accept', 'application/json');
+    res.setHeader('Content-Type', 'application/json');
 
     next()
 });
 
 app.get('/', (req, res) => {
-    return json.send(res, 200, {data: []});
+    return res.json({data: []});
 });
 
 app.get('/posts', async (req, res) => {
-    const params = ['userId', 'userPos'];
-    const posts = await axios(ApiUrl + '/posts');
+    let PostQuery = (req.query.userId) ? ApiUrl + '/posts?userId=' + req.query.userId : ApiUrl + '/posts';
 
-    const formattedPosts = posts.data.map(async post => {
+    const posts = await axios(PostQuery);
+
+    const formattedPosts = posts.data.map(async (post, i, arr) => {
         const userId = post.userId;
         const user = await axios(ApiUrl + '/users/' + userId);
+
+        if (req.query.userPos && checkPos(user.data.address.geo) !== req.query.userPos) {
+            //TODO: delete current element
+            return {};
+        }
 
         const commentsCount = await axios(ApiUrl + '/posts/' + post.id + '/comments');
 
@@ -51,14 +87,14 @@ app.get('/posts', async (req, res) => {
                 firstname: user.data.name,
                 lastname: user.data.name,
                 email: user.data.email,
-                geo: user.data.geo
+                geo: user.data.address.geo
             }
         };
     });
 
     const response = await Promise.all(formattedPosts);
 
-    return json.send(res, 200, {data: response});
+    return res.json({data: response});
 });
 
 app.listen(port, () => {
