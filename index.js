@@ -64,37 +64,41 @@ app.get('/', (req, res) => {
 app.get('/posts', async (req, res) => {
     let PostQuery = (req.query.userId) ? ApiUrl + '/posts?userId=' + req.query.userId : ApiUrl + '/posts';
 
-    const posts = await axios(PostQuery);
+    try {
+        const posts = await axios(PostQuery);
 
-    const formattedPosts = posts.data.map(async (post, i, arr) => {
-        const userId = post.userId;
-        const user = await axios(ApiUrl + '/users/' + userId);
+        const formattedPosts = posts.data.map(async (post) => {
+            const userId = post.userId;
+            const user = await axios(ApiUrl + '/users/' + userId);
 
-        if (req.query.userPos && checkPos(user.data.address.geo) !== req.query.userPos) {
-            //TODO: delete current element
-            return {};
-        }
-
-        const commentsCount = await axios(ApiUrl + '/posts/' + post.id + '/comments');
-
-        return {
-            id: post.id,
-            title: '<h1>' + post.title + '</h1>',
-            body: '<p>' + post.body + '</p>',
-            comments_count: commentsCount.data.length,
-            user: {
-                id: user.data.id,
-                firstname: user.data.name,
-                lastname: user.data.name,
-                email: user.data.email,
-                geo: user.data.address.geo
+            if (req.query.userPos && checkPos(user.data.address.geo) !== req.query.userPos) {
+                //TODO: delete current element
+                return {};
             }
-        };
-    });
 
-    const response = await Promise.all(formattedPosts);
+            const commentsCount = await axios(ApiUrl + '/posts/' + post.id + '/comments');
 
-    return res.json({data: response});
+            return {
+                id: post.id,
+                title: '<h1>' + post.title + '</h1>',
+                body: '<p>' + post.body + '</p>',
+                comments_count: commentsCount.data.length,
+                user: {
+                    id: user.data.id,
+                    firstname: user.data.name,
+                    lastname: user.data.name,
+                    email: user.data.email,
+                    geo: user.data.address.geo
+                }
+            };
+        });
+
+        const response = await Promise.all(formattedPosts);
+
+        return res.json({data: response})
+    } catch(err){
+        return res.json({error: err})
+    }
 });
 
 app.listen(port, () => {
