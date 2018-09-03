@@ -1,14 +1,12 @@
 "use strict";
 
-import ApiClient from './src/ApiClient';
-import JsonResponse from './src/JsonResponse';
+import Position from './src/Position';
 
 const express = require('express');
-const bodyParser = require('body-parser');
 
 const app = express();
-const api = new ApiClient();
-const json = new JsonResponse();
+const axios = require('axios');
+const position = new Position();
 
 /**
  * Config
@@ -17,45 +15,71 @@ const json = new JsonResponse();
 const port = 3000;
 
 /**
+ * External API URL
+ * @type {string}
+ */
+const ApiUrl = 'https://jsonplaceholder.typicode.com';
+
+/**
  * Routes
  */
 app.use(function (req, res, next) {
-    // Default api domain
-    api.setApiUrl('https://jsonplaceholder.typicode.com');
+    // Enable json prettify
+    app.set('json spaces', 2);
 
-    json.init(app, res);
+    // Set response headers
+    res.setHeader('Accept', 'application/json');
+    res.setHeader('Content-Type', 'application/json');
 
     next()
 });
 
 app.get('/', (req, res) => {
-    return json.send(res, 200, {data: []});
+    return res.json({data: []});
 });
 
-app.get('/posts', (req, res) => {
-    let posts = api.findAllPosts();
+app.get('/posts', async (req, res) => {
+    let PostQuery = (req.query.userId) ? ApiUrl + '/posts?userId=' + req.query.userId : ApiUrl + '/posts';
 
-    posts.forEach(function (p) {
-        let user = api.findUserById(p.userId);
+    try {
+        const posts = await axios(PostQuery);
 
-        p.title = '<h1>' + p.title + '</h1>';
-        p.body = '<p>' + p.body + '</p>';
-        p.user = {
-            "id": user.id,
-            "firstname": user.name,
-            "lastname": user.name,
-            "email": user.email,
-            "comments_count": 3,
-            "pos": user.geo,
-            "_links": {
-                "posts": "/posts?user=" + user.id
+        const promises = posts.data.map(async (post) => {
+            const UserId = post.userId;
+            const User = await axios(ApiUrl + '/users/' + UserId);
+
+            if (req.query.userPos && !position.CheckPos(User.data.address.geo, req.query.userPos)) {
+                return null;
             }
-        };
 
-        delete p.userId;
-    });
+            const commentsCount = await axios(ApiUrl + '/posts/' + post.id + '/comments');
 
-    return json.send(res, 200, {data: posts});
+            return {
+                id: post.id,
+                title: '<h1>' + post.title + '</h1>',
+                body: '<p>' + post.body + '</p>',
+                comments_count: commentsCount.data.length,
+                user: {
+                    id: User.data.id,
+                    firstname: User.data.name,
+                    lastname: User.data.name,
+                    email: User.data.email,
+                    geo: User.data.address.geo
+                }
+            };
+        });
+
+        const formattedPosts = await Promise.all(promises);
+
+        const data = formattedPosts.filter((p) => {
+            return (p !== null);
+        });
+
+        return res.json({data: data})
+    } catch (err) {
+        console.error(err);
+        return res.json({error: {code: 500, message: err}})
+    }
 });
 
 app.listen(port, () => {
