@@ -49,12 +49,6 @@ app.get('/posts', async (req, res) => {
             const User = await axios(ApiUrl + '/users/' + UserId);
 
             if (req.query.userPos && !position.CheckPos(User.data.address.geo, req.query.userPos)) {
-                console.log({
-                    param: req.query.userPos,
-                    CheckPos: position.CheckPos(User.data.address.geo, 'eq'),
-                    userPos: User.data.address.geo.lat
-                });
-
                 return null;
             }
 
