@@ -1,5 +1,7 @@
 # interview-v2
 
+![build status](https://api.travis-ci.org/Sundowndev/interview-v2.svg?branch=master)
+
 Simple REST API application based on Expressjs to fetch blog posts and users from an external API with custom endpoint and response.
 
 ### Installation (docker)
