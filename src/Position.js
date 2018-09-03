@@ -5,8 +5,6 @@
  * @constructor
  */
 export default function Position() {
-    this.latitude = 0;
-    this.longitude = 0;
 
     /**
      * Transform Latitude to DDM
@@ -19,13 +17,6 @@ export default function Position() {
         let iDecimal = Math.abs(parseInt(lat));
         let iMinutes = Math.abs(parseInt((lat - parseInt(lat)) * 60));
 
-        /*
-        return {
-            decimal: iDecimal,
-            minutes: iMinutes,
-            direction: sDirection
-        };
-         */
         return {
             decimal: iDecimal,
             minutes: iMinutes,
