@@ -33,7 +33,7 @@ $ docker-compose up -d
 
 ### API endpoints
 
-| Method / Route        | Resource           | Description  |
+| Method / Route        | Resource(s)           | Description  |
 | --------------------- | ------------------ | ------------ |
 | `GET` /posts      | Posts,Users | Fetch posts and their users |
 
@@ -43,8 +43,6 @@ The `/posts` route can receive extra parameters :
 | --------------------- | ------------------ | ------------ |
 | user_pos | eq,cancer,cap,arctic,antarctic | Search posts by user position |
 | user | *int* | Search posts of a single user using user id |
-
-A bad value will result in an error.
 
 ### Response
 
@@ -78,24 +76,24 @@ Here is an example response for `/posts` :
 
 ```json
 {
-    "data": [
-        {
-            "id": 1,
-            "title": "<h1>sunt aut facere repellat provident occaecati excepturi optio reprehenderit</h1>",
-            "body": "<p>quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto</p>",
-            "user": {
-                "id": 1,
-                "firstname": "Raphael",
-                "lastname": "Cerveaux",
-                "email": "raphael@crvx.fr",
-                "comments_count": 3,
-                "pos": {
-                    "lat": "-37.3159",
-                    "lng": "81.1496"
-                }
-            }
+  "data": [
+    {
+      "id": 21,
+      "title": "<h1>asperiores ea ipsam voluptatibus modi minima quia sint</h1>",
+      "body": "<p>repellat aliquid praesentium dolorem quo\nsed totam minus non itaque\nnihil labore molestiae sunt dolor eveniet hic recusandae veniam\ntempora et tenetur expedita sunt</p>",
+      "comments_count": 5,
+      "user": {
+        "id": 3,
+        "firstname": "Clementine Bauch",
+        "lastname": "Clementine Bauch",
+        "email": "Nathan@yesenia.net",
+        "geo": {
+          "lat": "-68.6102",
+          "lng": "-47.0653"
         }
-    ]
+      }
+    }
+  ]
 }
 ```
 
