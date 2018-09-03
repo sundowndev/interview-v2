@@ -1,0 +1,17 @@
+server {
+  listen   80; ## listen for ipv4; this line is default and implied
+  listen   [::]:80 default ipv6only=on; ## listen for ipv6
+  access_log /var/log/nginx/nodejs_project.log;
+  charset utf-8;
+
+  location /public {
+    alias /src/app/public;
+  }
+
+  location / {
+    proxy_pass http://server:3000;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+  }
+}
