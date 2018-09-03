@@ -43,8 +43,8 @@ The `/posts` route can receive extra parameters :
 
 | Parameter        | Values/type           | Description  |
 | --------------------- | ------------------ | ------------ |
-| user_pos | eq,cancer,cap,arctic,antarctic | Search posts by user position |
-| user | *int* | Search posts of a single user using user id |
+| userPos | eq,cancer,cap,arctic,antarctic | Search posts by user position |
+| userId | *int* | Search posts of a single user using user id |
 
 ### Response
 
