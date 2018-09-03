@@ -1,15 +1,12 @@
 "use strict";
 
-//import ApiClient from './src/ApiClient';
-//import JsonResponse from './src/JsonResponse';
+import Position from './src/Position';
 
 const express = require('express');
-const bodyParser = require('body-parser');
 
 const app = express();
-//const api = new ApiClient();
-//const json = new JsonResponse();
 const axios = require('axios');
+const position = new Position();
 
 /**
  * Config
@@ -22,26 +19,6 @@ const port = 3000;
  * @type {string}
  */
 const ApiUrl = 'https://jsonplaceholder.typicode.com';
-
-/**
- * Check position
- * @param geo
- */
-const checkPos = (geo) => {
-    //TODO: check position properly
-    switch (geo.lat | geo.lng) {
-        case geo.lat === 0:
-            return 'eq';
-        case geo.lat === 23 | geo.lng >= 27:
-            return 'cancer';
-        case geo.lat === 23 | geo.lng <= 27:
-            return 'cap';
-        case geo.lat === 66 | geo.lng >= 33:
-            return 'arctic';
-        case geo.lat === 66 | geo.lng <= 33:
-            return 'antarctic';
-    }
-};
 
 /**
  * Routes
@@ -67,13 +44,18 @@ app.get('/posts', async (req, res) => {
     try {
         const posts = await axios(PostQuery);
 
-        const formattedPosts = posts.data.map(async (post) => {
-            const userId = post.userId;
-            const user = await axios(ApiUrl + '/users/' + userId);
+        const promises = posts.data.map(async (post) => {
+            const UserId = post.userId;
+            const User = await axios(ApiUrl + '/users/' + UserId);
 
-            if (req.query.userPos && checkPos(user.data.address.geo) !== req.query.userPos) {
-                //TODO: delete current element
-                return {};
+            if (req.query.userPos && !position.CheckPos(User.data.address.geo, req.query.userPos)) {
+                console.log({
+                    param: req.query.userPos,
+                    CheckPos: position.CheckPos(User.data.address.geo, 'eq'),
+                    userPos: User.data.address.geo.lat
+                });
+
+                return null;
             }
 
             const commentsCount = await axios(ApiUrl + '/posts/' + post.id + '/comments');
@@ -84,20 +66,25 @@ app.get('/posts', async (req, res) => {
                 body: '<p>' + post.body + '</p>',
                 comments_count: commentsCount.data.length,
                 user: {
-                    id: user.data.id,
-                    firstname: user.data.name,
-                    lastname: user.data.name,
-                    email: user.data.email,
-                    geo: user.data.address.geo
+                    id: User.data.id,
+                    firstname: User.data.name,
+                    lastname: User.data.name,
+                    email: User.data.email,
+                    geo: User.data.address.geo
                 }
             };
         });
 
-        const response = await Promise.all(formattedPosts);
+        const formattedPosts = await Promise.all(promises);
 
-        return res.json({data: response})
-    } catch(err){
-        return res.json({error: err})
+        const data = formattedPosts.filter((p) => {
+            return (p !== null);
+        });
+
+        return res.json({data: data})
+    } catch (err) {
+        console.error(err);
+        return res.json({error: {code: 500, message: err}})
     }
 });
 
