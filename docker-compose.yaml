@@ -1,0 +1,18 @@
+nginx:
+  build: ./docker/nginx
+  links:
+    - app1:app1
+  ports:
+    - "8000:80"
+    - "443:443"
+  volumes:
+    - /etc/nginx/psw:/etc/nginx/psw
+    - /etc/nginx/ssl:/etc/nginx/ssl
+app1:
+  build: .
+  ports:
+    - "3000"
+  volumes:
+    - /tmp:/tmp
+  environment:
+    - MODE=dev
